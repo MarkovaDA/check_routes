@@ -43,6 +43,33 @@
                         map.addLayer(vector);                       
                     });
                 });
+                $('#launch').click(function(){
+                    //получаем декартовские координаты
+                    //порешать ошибки с секциями
+                    
+                    for(var i=0; i< 100; i+=100) {
+                        //dasha, dasha
+                         $.get("http://localhost:8080/check_routes/api/get_portion_of_section?from="+i).
+                         done(function(data){
+                              for(var j=0; j < data.length; j++){
+                                  var strOfPoints = "";
+                                  var point1 = new Array(), point2 = new Array(), point3 = new Array(), point4 = new Array();
+                                  point1.push(data[j].lon1); point1.push(data[j].lat1);
+                                  point2.push(data[j].lon2); point2.push(data[j].lat2);
+                                  point3.push(data[j].lon3); point3.push(data[j].lat3);
+                                  point4.push(data[j].lon4); point4.push(data[j].lat4);
+                                  
+                                  strOfPoints += ol.proj.fromLonLat(point1).toString();
+                                  strOfPoints += " " + ol.proj.fromLonLat(point2).toString();
+                                  strOfPoints += " " + ol.proj.fromLonLat(point3).toString();
+                                  strOfPoints += " " + ol.proj.fromLonLat(point4).toString();                                 
+                                  console.log(strOfPoints);
+                                  $.post("http://localhost:8080/check_routes/api/save_points",{coordinates:strOfPoints, section_id: data[j].sectionID}, function(data) {       
+                                  });
+                              }
+                         });
+                    }
+                });
             });
         </script>
         <style>
@@ -66,6 +93,8 @@
             </c:forEach>
         </select>
         <br><br>
+        <button id="launch">запустить скрипт</button>
+        <br>
         <div id="map" class="map">         
         </div>
     </body>

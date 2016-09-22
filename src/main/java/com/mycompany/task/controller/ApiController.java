@@ -32,4 +32,14 @@ public class ApiController {
         }
         return sectionsArray;
     }
+    
+    @RequestMapping(value = "/get_portion_of_section", method = RequestMethod.GET)
+    public List<Section> getPortionOfSection(@RequestParam("from") Integer from){
+        return segmentsMapper.getPortionOfSections(from);
+    }
+    
+    @RequestMapping(value = "/save_points", method = RequestMethod.POST)
+    public void SaveXY(@RequestParam("coordinates")String coordinates, @RequestParam("section_id")Integer sectionId){
+        segmentsMapper.insertIntoSectionsRectangle(sectionId, coordinates);
+    }
 }

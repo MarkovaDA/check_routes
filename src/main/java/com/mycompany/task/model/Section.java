@@ -11,7 +11,15 @@ public class Section {
     private double lat3;
     private double lon4;
     private double lat4;
+    private Integer sectionID;
 
+    public Integer getSectionID() {
+        return sectionID;
+    }
+
+    public void setSectionID(Integer sectionID) {
+        this.sectionID = sectionID;
+    }
     public double getLon4() {
         return lon4;
     }
