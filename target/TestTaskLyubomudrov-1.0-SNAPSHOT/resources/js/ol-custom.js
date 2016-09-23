@@ -1,8 +1,30 @@
         var map;
-        //формирование векторного слоя маршрута
+        var sourceVector = new ol.source.Vector();
+        var lineStyle = new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: '#f80000',
+                        width: 3
+                    })
+        });
+        
+        var layerVector = new ol.layer.Vector({
+                source: sourceVector,
+                style: lineStyle
+        });
+        //новый отрезок     
+        function addNewFeature(points){
+            var lineString = new ol.geom.LineString(points);                
+                lineString.transform('EPSG:4326', 'EPSG:3857');
+            var feature = new ol.Feature({
+                    geometry: lineString
+            });
+            //feature.setStyle();
+            sourceVector.addFeature(feature);
+        }
         function getVectorLayer(coordinates){
+            
             var lineString = new ol.geom.LineString(coordinates); //создаём отрезок                
-               lineString.transform('EPSG:4326', 'EPSG:3857'); 
+                lineString.transform('EPSG:4326', 'EPSG:3857'); 
             
             var feature = new ol.Feature({
                     geometry: lineString,
@@ -15,13 +37,13 @@
                         color: '#f80000',
                         width: 3
                     })
-            });
+            });           
             styles.push(lineStyle);  
             //создаём в отдельном слое
             var source = new ol.source.Vector({
                 features: [feature]
-            });
-            
+            });            
+            //переделать путем добавления нескольких features
             return new ol.layer.Vector({
                     source: source,
                     style: styleFunction
@@ -42,38 +64,21 @@
             ];
             //для каждого сегмента функция
             geometry.forEachSegment(function(start, end) {
-                
-            //var dx = (end[0] - start[0]);
-            //var dy = (end[1] - start[1]);
-            //var rotation = Math.atan2(dy, dx);
-            //var middlePoint = new ol.geom.Point([(end[0] + start[0])/2,(end[1] + start[1])/2]);
-
-            /*styles.push(new ol.style.Style({
-              geometry: new ol.geom.Point(end),
-              image: new ol.style.Icon({
-                //src: 'http://openlayers.org/en/v3.18.2/examples/data/arrow.png',
-                src: 'resources/image/arrow_right.png',
-                anchor: [0.75, 0.5],
-                rotateWithView: false,
-                rotation: -rotation
-              })
-            }));*/ 
-            styles.push(new ol.style.Style({
-                    geometry: new ol.geom.Point(start),
-                    image: new ol.style.Circle({
-                        radius: 3,
-                        stroke: new ol.style.Stroke({
-                          width: 1,
-                          color: 'blue'
-                        }),
-                        fill: new ol.style.Fill({
-                          color: 'blue'
+                styles.push(new ol.style.Style({
+                        geometry: new ol.geom.Point(start),
+                        image: new ol.style.Circle({
+                            radius: 3,
+                            stroke: new ol.style.Stroke({
+                              width: 1,
+                              color: 'blue'
+                            }),
+                            fill: new ol.style.Fill({
+                              color: 'blue'
+                            })
                         })
-                    })
-            }));
+                }));
             });
-
-        return styles;
+            return styles;
       };
         
         $(document).ready(function(){

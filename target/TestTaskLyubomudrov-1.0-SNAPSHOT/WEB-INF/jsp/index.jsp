@@ -15,39 +15,57 @@
         <script src="<c:url value="resources/js/ol-custom.js"/>"></script>
         
         <script>
-            var vector;
+            var vector;//слой, на который наносятся маршруты
+            var vectors = new Array();//группа слоев
             $(document).ready(function(){
                 $('#all_routes').change(function(){
+                    var point1, point2, point3, point4;
+                    
+                    var firstPartOfSegments, secondPartsOfSegments,thirdPartsOfSegments;
+                    
                     var routeId = parseInt($(this).val());
                     $.ajax({
                         type: "GET",
                         url: 'http://localhost:8080/check_routes/api/get_sections?route_id=' + routeId      
-                    }).done(function(data) {
-                        //console.log(data[0].lat1);
-                        var points = new Array();                       
+                    }).done(function(data) 
+                    {
                         for(var i=0; i < data.length; i++){
-                            //точки сегмента
-                            var point1 = new Array(); var point2 = new Array(); var point3 = new Array(); var point4 = new Array();
-                            point1.push(data[i].lon1);
-                            point1.push(data[i].lat1);
-                            point2.push(data[i].lon2);
-                            point2.push(data[i].lat2);
-                            point3.push(data[i].lon3);
-                            point3.push(data[i].lat3);
-                            point4.push(data[i].lon4);
-                            point4.push(data[i].lat4);
-                            points.push(point1); points.push(point2); points.push(point3); points.push(point4);
+                                point1 = new Array(); 
+                                point2 = new Array(); 
+                                point3 = new Array(); 
+                                point4 = new Array();
+                                
+                                firstPartOfSegments = new Array();
+                                secondPartsOfSegments = new Array();
+                                thirdPartsOfSegments = new Array();
+                                                              
+                                point1.push(data[i].lon1);
+                                point1.push(data[i].lat1);
+                                point2.push(data[i].lon2);
+                                point2.push(data[i].lat2);
+                                point3.push(data[i].lon3);
+                                point3.push(data[i].lat3);
+                                point4.push(data[i].lon4);
+                                point4.push(data[i].lat4);   
+                                //генерируем отрезки сегментов
+                                firstPartOfSegments.push(point1); firstPartOfSegments.push(point2);
+                                secondPartsOfSegments.push(point2); secondPartsOfSegments.push(point3);
+                                thirdPartsOfSegments.push(point3); thirdPartsOfSegments.push(point4); 
+                                
+                                addNewFeature(firstPartOfSegments);
+                                addNewFeature(secondPartsOfSegments);
+                                addNewFeature(thirdPartsOfSegments);                             
                         }
-                        map.removeLayer(vector);                      
-                        vector = getVectorLayer(points);
-                        map.addLayer(vector);                       
+                        map.removeLayer(layerVector);
+                        layerVector.setStyle(styleFunction);
+                        map.addLayer(layerVector);                                             
                     });
                 });
                 $('#launch').click(function(){
                     //получаем декартовские координаты
                     //порешать ошибки с секциями
                     
-                    for(var i=0; i< 100; i+=100) {
+                    for(var i=100; i< 3093; i+=100) {
                         //dasha, dasha
                          $.get("http://localhost:8080/check_routes/api/get_portion_of_section?from="+i).
                          done(function(data){
@@ -93,7 +111,7 @@
             </c:forEach>
         </select>
         <br><br>
-        <button id="launch">запустить скрипт</button>
+        <!--<button id="launch">запустить скрипт</button>-->
         <br>
         <div id="map" class="map">         
         </div>

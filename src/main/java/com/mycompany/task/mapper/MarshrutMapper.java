@@ -20,7 +20,7 @@ public interface MarshrutMapper {
     @Select("select distinct routeID as routeId, routeName FROM vistar_marshrut.gpsBusesRoutes")
     List<Route> getRoutes();
     
-    @Select("select lat1, lon1, lat2, lon2, lat3, lon3, lat4, lon4 from vistar_marshrut.sections where sectionID = #{sectionId};")
+    @Select("select sectionID, lat1, lon1, lat2, lon2, lat3, lon3, lat4, lon4 from vistar_marshrut.sections where sectionID = #{sectionId};")
     Section getSectionGeoLocation(Integer sectionId);
     
   
