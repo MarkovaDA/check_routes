@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 
 public interface MarshrutMapper {
@@ -29,5 +30,19 @@ public interface MarshrutMapper {
     
     @Insert("insert into vistar_marshrut.sectionsRectangle (section_id, rect_points_xy, koeff_xy) values (#{sectionId},#{rectangle},'no')")
     void insertIntoSectionsRectangle(@Param("sectionId")Integer sectionId, @Param("rectangle")String rectangle);
+    
+    @Insert("insert into vistar_marshrut.sectionsPolygons (points,section_id,part) values (#{points},#{section_id},#{part})")          
+    void insertIntoSectionsPolygon(@Param("points")String points, @Param("section_id")Integer sectionId, @Param("part")Integer part);
+    
+    @Select("select rect_points_xy from vistar_marshrut.sectionsRectangle where section_id=#{section_id}")    
+    String getPoints(@Param("section_id")Integer sectionId);
+    
+    @Select("select points from vistar_marshrut.sectionsPolygons where section_id=#{section_id} and part=#{part}")
+    String getPolygonPoints(@Param("section_id")Integer sectionId, @Param("part")Integer part);
+    
+    @Update("update vistar_marshrut.sectionsRectangle set rect_points_xy= #{rectangle} where section_id=#{section_id}")
+    void updateIntoSections(@Param("section_id")Integer sectionId, @Param("rectangle")String rectangle); 
+    
+    //MyBatis + SpringMVC
     
 }

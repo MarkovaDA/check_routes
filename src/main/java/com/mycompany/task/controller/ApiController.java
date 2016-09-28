@@ -20,16 +20,21 @@ public class ApiController {
     @Autowired
     private MarshrutMapper segmentsMapper;
     
+    private  List<Section> sectionsArray;
 
     @RequestMapping(value = "/get_sections", method = RequestMethod.GET)
     public List<Section> getSections(@RequestParam("route_id") Integer routeId){
         String  segments = segmentsMapper.getSections(routeId);
         List<String> sectionsIdsArray = new ArrayList<String>();
-        List<Section> sectionsArray = new ArrayList<Section>();
+        
+        sectionsArray = new ArrayList<Section>();
+        
         if (segments != null){
            sectionsIdsArray = Arrays.asList(segments.split("\\s+"));
            sectionsIdsArray.forEach(item-> {sectionsArray.add(segmentsMapper.getSectionGeoLocation(Integer.parseInt(item)));});
         }
+        
+        sectionsArray.forEach(item -> {item.getWrapperRectangle(segmentsMapper);});   
         return sectionsArray;
     }
     
@@ -40,6 +45,45 @@ public class ApiController {
     
     @RequestMapping(value = "/save_points", method = RequestMethod.POST)
     public void SaveXY(@RequestParam("coordinates")String coordinates, @RequestParam("section_id")Integer sectionId){
-        segmentsMapper.insertIntoSectionsRectangle(sectionId, coordinates);
+
+        Segment segment1;
+        Segment segment2;
+        Segment segment3;
+        
+        String[] points = coordinates.split(" ");
+        List<Double> lists = new ArrayList<Double>();
+        
+        for(int i = 0; i < points.length; i++){           
+           String[] currentPoint = points[i].split(",");  
+           lists.add(Double.parseDouble(currentPoint[0]));
+           lists.add(Double.parseDouble(currentPoint[1]));           
+        }
+        segment1 = new Segment(lists.get(0), lists.get(1), lists.get(2), lists.get(3));
+        segment2 = new Segment(lists.get(2), lists.get(3), lists.get(4), lists.get(5));
+        segment3 = new Segment(lists.get(4), lists.get(5), lists.get(6), lists.get(7));
+        
+        segment1.buildRectPoint();
+        List<RectanglePoint> shaders = segment1.shaders;
+        String shadersStr = printShadersToString(shaders);
+        //segmentsMapper.insertIntoSectionsPolygon(shadersStr, sectionId, 1);
+        
+        segment2.buildRectPoint();
+        shadersStr = printShadersToString(shaders);
+        //segmentsMapper.insertIntoSectionsPolygon(shadersStr, sectionId, 2);
+        
+        segment3.buildRectPoint();
+        shadersStr = printShadersToString(shaders);
+        //segmentsMapper.insertIntoSectionsPolygon(shadersStr, sectionId, 3);       
+        
+        System.out.println("SECTION_ID" + sectionId);
+    }
+    
+    private String printShadersToString(List<RectanglePoint> shaders){
+        String shadersStr = "";         
+        for(int i=0; i < shaders.size(); i++){
+            shadersStr += Double.toString(shaders.get(i).x) + "," + Double.toString(shaders.get(i).y) + " ";
+        }
+        shadersStr = shadersStr.trim();
+        return shadersStr;
     }
 }

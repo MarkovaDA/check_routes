@@ -1,5 +1,7 @@
         var map;
         var sourceVector = new ol.source.Vector();
+        var rectSourceVector = new ol.source.Vector(); 
+       
         var lineStyle = new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: '#f80000',
@@ -7,10 +9,43 @@
                     })
         });
         
+        var rectStyle = new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                        color: 'green',
+                        width: 2
+                    }),
+            image: new ol.style.Circle({
+                    radius: 2,
+                    stroke: new ol.style.Stroke({
+                      width: 1,
+                      color: 'green'
+                    }),
+                    fill: new ol.style.Fill({
+                      color: 'green'
+                    })
+            })
+        });
+        
         var layerVector = new ol.layer.Vector({
                 source: sourceVector,
                 style: lineStyle
         });
+        
+        //слой для нанесения точек на карту
+        var rectLayerVector = new ol.layer.Vector({
+            source: rectSourceVector,
+            style: rectStyle                   
+        });
+        //точка на углах прямоугольника
+        function addNewRectFeature(point){
+            //передаю одну единственную точку
+            var rectOnePoint = new ol.geom.Point(point);
+                rectOnePoint.transform('EPSG:4326', 'EPSG:3857');                
+            var feature = new ol.Feature({
+                    geometry: rectOnePoint
+            });
+            rectSourceVector.addFeature(feature);
+        }
         //новый отрезок     
         function addNewFeature(points){
             var lineString = new ol.geom.LineString(points);                
@@ -48,9 +83,7 @@
                     source: source,
                     style: styleFunction
             });
-        }
-        
-        
+        }    
         var styleFunction = function(feature) {
             var geometry = feature.getGeometry();
             var styles = [
@@ -67,7 +100,7 @@
                 styles.push(new ol.style.Style({
                         geometry: new ol.geom.Point(start),
                         image: new ol.style.Circle({
-                            radius: 3,
+                            radius: 2,
                             stroke: new ol.style.Stroke({
                               width: 1,
                               color: 'blue'
