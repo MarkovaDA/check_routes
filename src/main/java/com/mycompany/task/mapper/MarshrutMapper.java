@@ -34,6 +34,9 @@ public interface MarshrutMapper {
     @Insert("insert into vistar_marshrut.sectionsPolygons (points,section_id,part) values (#{points},#{section_id},#{part})")          
     void insertIntoSectionsPolygon(@Param("points")String points, @Param("section_id")Integer sectionId, @Param("part")Integer part);
     
+    @Select("update vistar_marshrut.sectionsPolygons set points = #{points} where section_id= #{section_id} and part = #{part}")
+    void updateIntoSectionsPolygon(@Param("section_id")Integer sectionId, @Param("part")Integer part, @Param("points")String points);
+    
     @Select("select rect_points_xy from vistar_marshrut.sectionsRectangle where section_id=#{section_id}")    
     String getPoints(@Param("section_id")Integer sectionId);
     

@@ -1,31 +1,48 @@
         var map;
         var sourceVector = new ol.source.Vector();
-        var rectSourceVector = new ol.source.Vector(); 
-       
+        var rectSourceVector = new ol.source.Vector(); //для отображения прямоугольников первых секций
+        
         var lineStyle = new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: '#f80000',
-                        width: 3
+                        width: 2
                     })
         });
         
-        var rectStyle = new ol.style.Style({
+        
+        
+        var rectStyle1 = new ol.style.Style({
             stroke: new ol.style.Stroke({
-                        color: 'green',
+                        color: 'black',
                         width: 2
-                    }),
-            image: new ol.style.Circle({
+                    })
+            /*image: new ol.style.Circle({
                     radius: 2,
                     stroke: new ol.style.Stroke({
-                      width: 1,
+                      width: 3,
                       color: 'green'
                     }),
                     fill: new ol.style.Fill({
                       color: 'green'
                     })
-            })
+            })*/
+        });
+        var rectStyle2 = new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                        color: 'green',
+                        width: 2
+                    })
+        });
+        var rectStyle3 = new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                        color: '#8b00ff',
+                        width: 2
+                    })
         });
         
+        var stylesRect = new Array(); //массив стилей для сегментов
+        stylesRect[0] = rectStyle1; stylesRect[1] = rectStyle2; stylesRect[2] = rectStyle3;
+          
         var layerVector = new ol.layer.Vector({
                 source: sourceVector,
                 style: lineStyle
@@ -34,16 +51,27 @@
         //слой для нанесения точек на карту
         var rectLayerVector = new ol.layer.Vector({
             source: rectSourceVector,
-            style: rectStyle                   
+            style: rectStyle1                   
         });
         //точка на углах прямоугольника
-        function addNewRectFeature(point){
+        function addNewRectFeature(point, index){
             //передаю одну единственную точку
-            var rectOnePoint = new ol.geom.Point(point);
+            var rectOnePoint = new ol.geom.LineString(point);
                 rectOnePoint.transform('EPSG:4326', 'EPSG:3857');                
             var feature = new ol.Feature({
                     geometry: rectOnePoint
             });
+            index = parseInt(index);
+            //!!!что-то массив не распознает
+            if (index === 0){
+                feature.setStyle(rectStyle1);
+            }
+            if (index === 1){
+                feature.setStyle(rectStyle2);
+            }
+            if (index === 2){
+               feature.setStyle(rectStyle3); 
+            }
             rectSourceVector.addFeature(feature);
         }
         //новый отрезок     
@@ -53,7 +81,6 @@
             var feature = new ol.Feature({
                     geometry: lineString
             });
-            //feature.setStyle();
             sourceVector.addFeature(feature);
         }
         function getVectorLayer(coordinates){
@@ -114,19 +141,7 @@
             return styles;
       };
         
-        $(document).ready(function(){
-                //прорисовать сегменты все и для них прямоугольники
-                /*var lineString = new ol.geom.LineString(coords); //создаём отрезок                
-                lineString.transform('EPSG:4326', 'EPSG:3857'); 
-                var point1 = [4369571.5633409, 6741118.302003121];
-                var point2 = [4369583.6482891, 6741134.23839418];
-                var point3 = [4370144.875037538,6740683.546686126];
-                var point4 = [4370156.959296326,6740699.482168059];
-                console.log(ol.proj.toLonLat(point1));
-                console.log(ol.proj.toLonLat(point2));
-                console.log(ol.proj.toLonLat(point3));
-                console.log(ol.proj.toLonLat(point4));*/
-                //прогрузка карты                
+        $(document).ready(function(){           
                 map = new ol.Map({
                     layers: [
                       new ol.layer.Tile({

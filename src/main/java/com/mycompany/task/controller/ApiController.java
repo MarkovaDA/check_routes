@@ -65,15 +65,17 @@ public class ApiController {
         segment1.buildRectPoint();
         List<RectanglePoint> shaders = segment1.shaders;
         String shadersStr = printShadersToString(shaders);
-        //segmentsMapper.insertIntoSectionsPolygon(shadersStr, sectionId, 1);
+        segmentsMapper.updateIntoSectionsPolygon(sectionId, 1, shadersStr);
         
         segment2.buildRectPoint();
+        shaders = segment2.shaders;
         shadersStr = printShadersToString(shaders);
-        //segmentsMapper.insertIntoSectionsPolygon(shadersStr, sectionId, 2);
+        segmentsMapper.updateIntoSectionsPolygon(sectionId, 2, shadersStr);
         
         segment3.buildRectPoint();
-        shadersStr = printShadersToString(shaders);
-        //segmentsMapper.insertIntoSectionsPolygon(shadersStr, sectionId, 3);       
+        shaders = segment3.shaders;
+        shadersStr = printShadersToString(shaders);  
+        segmentsMapper.updateIntoSectionsPolygon(sectionId, 1, shadersStr);
         
         System.out.println("SECTION_ID" + sectionId);
     }

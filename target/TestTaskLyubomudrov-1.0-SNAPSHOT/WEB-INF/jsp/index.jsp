@@ -22,6 +22,7 @@
                 $('#all_routes').change(function(){
                     var point1, point2, point3, point4;                   
                     var firstPartOfSegments, secondPartsOfSegments,thirdPartsOfSegments;
+                    var temp1 = new Array(); var temp2 = new Array();
                     
                     var routeId = parseInt($(this).val());
                     $.ajax({
@@ -29,7 +30,7 @@
                         url: 'http://localhost:8080/check_routes/api/get_sections?route_id=' + routeId      
                     }).done(function(data) 
                     {   console.log(data);
-                        for(var i=0; i < data.length; i++)
+                        for(var i=0; i < data.length / 2; i++)
                         {
                                 point1 = new Array(); 
                                 point2 = new Array(); 
@@ -56,16 +57,8 @@
                                 addNewFeature(firstPartOfSegments);
                                 addNewFeature(secondPartsOfSegments);
                                 addNewFeature(thirdPartsOfSegments); 
-                                
-                                /*for(var j=0; j < data[i].rectpoints.length; j++){
-                                   var currentPoint = new Array(); //представление текущей точки
-                                   var x = data[i].rectpoints[j].x;
-                                   var y = data[i].rectpoints[j].y;
-                                   currentPoint.push(x); currentPoint.push(y);
-                                   currentPoint = ol.proj.toLonLat(currentPoint);
-                                   addNewRectFeature(currentPoint); 
-                                }*/
-                                var polygon = new Array();
+                                                                                              
+                                var polygon = new Array();                                
                                 for(var j=0; j < data[i].rectpoints1.length; j++){                                   
                                    var currentPoint = new Array(); //представление текущей точки
                                    var x = data[i].rectpoints1[j].x;
@@ -73,63 +66,61 @@
                                    currentPoint.push(x); currentPoint.push(y);
                                    currentPoint = ol.proj.toLonLat(currentPoint);
                                    polygon.push(currentPoint);
-                                   addNewRectFeature(currentPoint); 
                                 }
-                                //addNewRectFeature(polygon);
-                                console.log(i);
+
+                                temp1 = new Array();  temp2 = new Array();
+                                temp1.push(polygon[2][0]); temp2.push(polygon[3][0]);
+                                temp1.push(polygon[2][1]); temp2.push(polygon[3][1]);
+                                polygon[2] = temp2; polygon[3] = temp1;
+                                polygon.push(polygon[0]);
+                                addNewRectFeature(polygon, 0);  
                                 
-                                /*for(var i=0; i < data[i].rectpoints2.length; i++){
+                                //!!!рисование второго полигона                                
+                                var polygon2 = new Array();                                                               
+                                for(var j=0; j < data[i].rectpoints2.length; j++){                                   
                                    var currentPoint = new Array(); //представление текущей точки
-                                   var x = data[i].rectpoints1[i].x;
-                                   var y = data[i].rectpoints1[i].y;
+                                   var x = data[i].rectpoints2[j].x;
+                                   var y = data[i].rectpoints2[j].y;
                                    currentPoint.push(x); currentPoint.push(y);
                                    currentPoint = ol.proj.toLonLat(currentPoint);
-                                   console.log(currentPoint);
-                                   addNewRectFeature(currentPoint); 
-                                }
+                                   polygon2.push(currentPoint);
+                                }                               
+                                temp1 = new Array();        temp2 = new Array();
+                                temp1.push(polygon2[2][0]); temp2.push(polygon2[3][0]);
+                                temp1.push(polygon2[2][1]); temp2.push(polygon2[3][1]);
+                                polygon2[2] = temp2; polygon2[3] = temp1;
+                                polygon2.push(polygon2[0]);
+                                addNewRectFeature(polygon2, 1);                                 
                                 
-                                for(var i=0; i < data[i].rectpoints3.length; i++){
+                                //рисование 3-го полигона
+                                var polygon3 = new Array();                                                               
+                                for(var j=0; j < data[i].rectpoints3.length; j++){                                   
                                    var currentPoint = new Array(); //представление текущей точки
-                                   var x = data[i].rectpoints1[i].x;
-                                   var y = data[i].rectpoints1[i].y;
+                                   var x = data[i].rectpoints3[j].x;
+                                   var y = data[i].rectpoints3[j].y;
                                    currentPoint.push(x); currentPoint.push(y);
                                    currentPoint = ol.proj.toLonLat(currentPoint);
-                                   console.log(currentPoint);
-                                   addNewRectFeature(currentPoint); 
-                                }*/
+                                   polygon3.push(currentPoint);
+                                }                               
+                                temp1 = new Array();       temp2 = new Array();
+                                temp1.push(polygon3[2][0]); temp2.push(polygon3[3][0]);
+                                temp1.push(polygon3[2][1]); temp2.push(polygon3[3][1]);
+                                polygon3[2] = temp2; polygon3[3] = temp1;
+                                polygon3.push(polygon3[0]);
+                                addNewRectFeature(polygon3, 2);
+                              
                                 
-                                /*var x1 = data[i].rectpoints[0].x;
-                                var y1 = data[i].rectpoints[0].y;
-                                var x2 = data[i].rectpoints[1].x;
-                                var y2 = data[i].rectpoints[1].y;
-                                var x3 = data[i].rectpoints[2].x;
-                                var y3 = data[i].rectpoints[2].y;
-                                var x4 = data[i].rectpoints[3].x;
-                                var y4 = data[i].rectpoints[3].y;                                                                                             
-                                var points = new Array();    //набор точек                               
-                                points.push(x1); points.push(y1);  
-                                points = ol.proj.toLonLat(points); //1-ая точка
-                                addNewRectFeature(points);                                                               
-                                points = new Array();                                
-                                points.push(x2); points.push(y2);
-                                points = ol.proj.toLonLat(points); //2-ая точка
-                                addNewRectFeature(points);                                                                
-                                points = new Array();                               
-                                points.push(x3); points.push(y3);
-                                points = ol.proj.toLonLat(points); //3-ая точка
-                                addNewRectFeature(points);//прорисовываем                                                                
-                                points = new Array();
-                                points.push(x4); points.push(y4);
-                                points = ol.proj.toLonLat(points); //4 точка
-                                addNewRectFeature(points);*/
                         }
+                        console.log("конец");
                         map.removeLayer(layerVector);
                         layerVector.setStyle(styleFunction);
-                        rectLayerVector.setStyle(rectStyle);
-                        map.addLayer(layerVector); 
+                        //rectLayerVector.setStyle(rectStyle);
+                        map.addLayer(layerVector);
                         map.addLayer(rectLayerVector);
                     });
                 });
+                
+                
                 $('#launch').click(function(){
                     for(var i=0; i< 3093; i+=100) {
                          $.get("http://localhost:8080/check_routes/api/get_portion_of_section?from="+i).

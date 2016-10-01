@@ -47,10 +47,7 @@ public class Section {
     public void setRectpoints3(List<Point> rectpoints3) {
         this.rectpoints3 = rectpoints3;
     }
-    
-    
-    
-    
+        
     public List<Point> getRectpoints() {
         return rectpoints;
     }
