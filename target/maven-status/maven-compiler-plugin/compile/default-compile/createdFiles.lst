@@ -8,6 +8,7 @@ com/mycompany/task/model/GeoPoint.class
 com/mycompany/task/model/Bus.class
 com/mycompany/task/model/Point.class
 com/mycompany/task/model/Route.class
+com/mycompany/task/controller/ReportController.class
 com/mycompany/task/controller/Segment.class
 com/mycompany/task/config/SpringWebMVCConfig.class
 com/mycompany/task/controller/PointType.class
