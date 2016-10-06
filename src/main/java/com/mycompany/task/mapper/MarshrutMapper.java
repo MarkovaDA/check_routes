@@ -46,6 +46,25 @@ public interface MarshrutMapper {
     @Update("update vistar_marshrut.sectionsRectangle set rect_points_xy= #{rectangle} where section_id=#{section_id}")
     void updateIntoSections(@Param("section_id")Integer sectionId, @Param("rectangle")String rectangle); 
     
-    //MyBatis + SpringMVC
+    @Select("select distinct dayofmonth(switchTime) from vistar_marshrut.history where busID=#{vechicle_id} and year(switchTime) = #{year} and month(switchTime) = #{month}")
+    List<Integer> daysOfMonth(@Param("year")String year, @Param("month")String month, @Param("vechicle_id")String vechicleId);
+
+    //года, в течение которых наблюдалась активность
+    @Select("select distinct year(switchTime) from vistar_murshrut.history where busID=#{vechicle_id}")
+    List<Integer> getYearsOfTrack(@Param("vechicle_id")String vechicleId);
+    
+    //все записи по устройству за указанный день
+    @Select("select *, @row:=@row + 1 _row FROM vistar_marshrut.history,(select @row := 0) _row where  busID=#{bus_id}  and switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY) having _row % 3 = 0")
+    List<String> getHistoryFields(@Param("date_str")String date_str, @Param("bus_id")String busId); //cоответствующую структуру данных
+    
+    //все маршруты устройства
+    @Select("select routeID from vistar_marshrut.history where busID = #{bus_id}")
+    List<String> getRoutesForBus(@Param("bus_id")String busId);
+    
+    
+    //автобусы,у которых несколько маршрутов
+    //"select busID, routeID from vistar_marshrut.busRoutes layer1 where 1 < (select count(*)  from vistar_marshrut.busRoutes layer2 where layer2.busID = layer1.busID) order by busID";
+    
+    //270 272 274 277 294 333 345 351 354 358 359 360 361 364 526 528 530 530 609 612 796 1177
     
 }

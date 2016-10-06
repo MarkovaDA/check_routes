@@ -10,22 +10,27 @@
         <script src="<c:url value="resources/js/jquery-ui.js"/>"></script>
         <script src="<c:url value="resources/js/datepicker.localization.js"/>"></script>
         <style>
-            .ui-datepicker-calendar td {
-                padding: 3px !important;
-            }
+        .ui-datepicker-calendar td {
+            padding: 3px !important;
+        }
         </style>
         
         
         <script>
-            $(document).ready(function(){
-                /*$('.ui-datepicker-calendar td')
+            function selectDaysOfMonths(arrayOfNumbers){
+                $('.ui-datepicker-calendar td')
                     .each(function(index, elem)
-                    {
+                    {   
                         if (!$(this).hasClass("ui-datepicker-other-month")){
-                            $(this).find('.ui-state-default').eq(0).css('background', '#0f93ff');                                                     
+                            var value = parseInt($(this).find('.ui-state-default').eq(0).text());
+                            if (arrayOfNumbers.includes(value))
+                            $(this).find('.ui-state-default').eq(0).css('border', '1px solid orange');                                                     
                         }
                     }
-                );*/
+                );
+            }
+            $(document).ready(function(){
+               
                 $("#datepicker").datepicker(
                     {
                         changeMonth:true,
@@ -46,23 +51,41 @@
                         isRTL: false,
                         onSelect: function (dateText, inst) {
                             console.log(dateText);
-                            //аjax-запрос на анлиз некоторой даты
                         },
                         onChangeMonthYear: function (year, month, inst) {
-                            console.log(year + " " + month);
-                            //аjax-запрос на получение дат
+                            $('#load').fadeIn(200);
+                            var vechicleId = $('#vechicle_id').val();
+                            console.log(vechicleId);
+                            $.get("report_api/get_days_of_months?year="+year+"&month="+month + "&vechicle_id="+vechicleId, function(data){
+                                console.log(data);
+                                $('#load').fadeOut(100);
+                                selectDaysOfMonths(data);
+                            });
                         }
                     }
                 );
+                $('#load').hide();
                 //$.datepicker.setDefaults($.datepicker.regional['ru']);
             });            
         </script>
     </head>
     <body>
-        <h1>Отчет по траектории движения автобусов</h1>
+        
         
         <!--<p>Дата: <input type="text" id="datepicker"></p>-->
-        
-        <div id="datepicker"></div>
+        <div style="width: 100%; text-align: left;">
+            <h1>Отчет по траектории движения автобусов</h1>
+            <p>Укажите идентификатор транспорта (1 ... 6544)</p>
+            <input type="text" id="vechicle_id" value="1177"><br>
+            <br>
+            <div id="datepicker"></div>
+            <br>
+            <div id="load" style="width:300px; text-align: center;">
+                <img src="<c:url value="resources/image/loader.gif"/>" width="50px">
+            </div>
+            <p>Укажите временной диапазон для отчета</p>
+            <input type="text" value="****-**-**" id="date1"> - 
+            <input type="text" value="****-**-**" id="date2">
+        </div>
     </body>
 </html>

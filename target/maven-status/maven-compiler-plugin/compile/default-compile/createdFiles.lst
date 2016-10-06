@@ -10,6 +10,7 @@ com/mycompany/task/model/Point.class
 com/mycompany/task/model/Route.class
 com/mycompany/task/controller/ReportController.class
 com/mycompany/task/controller/Segment.class
+com/mycompany/task/controller/ReportApiController.class
 com/mycompany/task/config/SpringWebMVCConfig.class
 com/mycompany/task/controller/PointType.class
 com/mycompany/task/model/Straight.class
