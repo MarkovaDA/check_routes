@@ -1,5 +1,6 @@
 
 package com.mycompany.task.mapper;
+import com.mycompany.task.model.History;
 import com.mycompany.task.model.Route;
 import com.mycompany.task.model.Section;
 import java.util.List;
@@ -54,17 +55,20 @@ public interface MarshrutMapper {
     List<Integer> getYearsOfTrack(@Param("vechicle_id")String vechicleId);
     
     //все записи по устройству за указанный день
-    @Select("select *, @row:=@row + 1 _row FROM vistar_marshrut.history,(select @row := 0) _row where  busID=#{bus_id}  and switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY) having _row % 3 = 0")
-    List<String> getHistoryFields(@Param("date_str")String date_str, @Param("bus_id")String busId); //cоответствующую структуру данных
+    @Select("select *, @row:=@row + 1 _row FROM vistar_marshrut.history,(select @row := 0) _row where  busID=#{bus_id}  and switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY) having _row % 4 = 0")
+    List<History> getHistoryFields(@Param("date_str")String date_str, @Param("bus_id")String busId); //cоответствующую структуру данных
     
     //все маршруты устройства
     @Select("select routeID from vistar_marshrut.history where busID = #{bus_id}")
     List<String> getRoutesForBus(@Param("bus_id")String busId);
     
+    @Select("select sections from vistar_marshrut.routes where routeID = #{route_id}")
+    String getSectionsStrByRouteId(@Param("route_id")Integer routeId);
     
-    //автобусы,у которых несколько маршрутов
-    //"select busID, routeID from vistar_marshrut.busRoutes layer1 where 1 < (select count(*)  from vistar_marshrut.busRoutes layer2 where layer2.busID = layer1.busID) order by busID";
+    @Select("select * from vistar_marshrut.routes")
+    List<Route> getAllRoutes();
     
     //270 272 274 277 294 333 345 351 354 358 359 360 361 364 526 528 530 530 609 612 796 1177
+    
     
 }

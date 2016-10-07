@@ -6,6 +6,7 @@ com/mycompany/task/controller/MainController.class
 com/mycompany/task/model/BusVehicle.class
 com/mycompany/task/model/GeoPoint.class
 com/mycompany/task/model/Bus.class
+com/mycompany/task/model/History.class
 com/mycompany/task/model/Point.class
 com/mycompany/task/model/Route.class
 com/mycompany/task/controller/ReportController.class

@@ -4,6 +4,7 @@
 /home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/model/Point.java
 /home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/model/Route.java
 /home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/persistence/dao/ModelDAO.java
+/home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/model/History.java
 /home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/controller/Segment.java
 /home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/model/GeoPoint.java
 /home/darya/Documents/NetBeansProjects/Check_routes/src/main/java/com/mycompany/task/model/Bus.java
