@@ -58,8 +58,8 @@ public interface MarshrutMapper {
     @Select("select *, @row:=@row + 1 _row FROM vistar_marshrut.history,(select @row := 0) _row where  busID=#{bus_id}  and switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY) having _row % 4 = 0")
     List<History> getHistoryFields(@Param("date_str")String date_str, @Param("bus_id")String busId); //cоответствующую структуру данных
     
-    //все маршруты устройства
-    @Select("select routeID from vistar_marshrut.history where busID = #{bus_id}")
+    //все маршруты прдопределённые маршруты устройства
+    @Select("select routeID from vistar_marshrut.busRoutes where busID = #{bus_id}")
     List<String> getRoutesForBus(@Param("bus_id")String busId);
     
     @Select("select sections from vistar_marshrut.routes where routeID = #{route_id}")
@@ -68,7 +68,7 @@ public interface MarshrutMapper {
     @Select("select * from vistar_marshrut.routes")
     List<Route> getAllRoutes();
     
-    //270 272 274 277 294 333 345 351 354 358 359 360 361 364 526 528 530 530 609 612 796 1177
-    
-    
+    @Select("select distinct busID from vistar_marshrut.history where switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY)")
+    List<String> getTodayActiveBuses(@Param("date_str")String date_str);
+        
 }

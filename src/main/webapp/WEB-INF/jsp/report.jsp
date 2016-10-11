@@ -13,6 +13,12 @@
         .ui-datepicker-calendar td {
             padding: 3px !important;
         }
+        table {
+            border: 2px double black;
+        }
+        td, th{
+            border: 1px solid black;
+        }
         </style>
         
         
@@ -30,7 +36,7 @@
                 );
             }
             $(document).ready(function(){
-               
+                
                 $("#datepicker").datepicker(
                     {
                         changeMonth:true,
@@ -65,8 +71,26 @@
                     }
                 );
                 $('#load').hide();
-                //$.datepicker.setDefaults($.datepicker.regional['ru']);
-            });            
+                $('#generate_btn').bind("click", generateReport);
+               
+            });  
+
+            function generateReport(){
+                 $('#load').fadeIn(100);
+                 $.get("report_api/anylize2", function(data){
+                    //console.log(data);
+                     $('#load').fadeOut(100);
+                     for(var index in data){
+                        var item = data[index];                         
+                        var pattern = "<tr><td>" + item.busId + "</td><td>";
+                        for(var j=0; j < item.prescribedRoutes.length; j++)
+                            pattern += item.prescribedRoutes[j] + ";";
+                        pattern+="</td>";
+                        pattern+="<td>" + item.todayResult + "</td></tr>";
+                        $('#report_table').append(pattern);
+                     }
+                 });
+            }
         </script>
     </head>
     <body>
@@ -75,17 +99,24 @@
         <!--<p>Дата: <input type="text" id="datepicker"></p>-->
         <div style="width: 100%; text-align: left;">
             <h1>Отчет по траектории движения автобусов</h1>
-            <p>Укажите идентификатор транспорта (1 ... 6544)</p>
+            <button id="generate_btn">сгенерировать</button>
+            <!--<p>Укажите идентификатор транспорта (1 ... 6544)</p>
             <input type="text" id="vechicle_id" value="1177"><br>
             <br>
-            <div id="datepicker"></div>
+            <div id="datepicker"></div>-->
+            
             <br>
-            <div id="load" style="width:300px; text-align: center;">
+            <div id="load" style="width:100%; text-align: center;">
                 <img src="<c:url value="resources/image/loader.gif"/>" width="50px">
-            </div>
-            <p>Укажите временной диапазон для отчета</p>
-            <input type="text" value="****-**-**" id="date1"> - 
-            <input type="text" value="****-**-**" id="date2">
+            </div>           
+            <table id="report_table" cellspacing="0" cellpadding="5">
+                <caption>Сводная таблица</caption>
+                <tr bgcolor="red">
+                    <th>BusID</th>
+                    <th>предписанные маршруты</th>
+                    <th>траектория движения сегодня</th>
+                </tr>
+            </table>
         </div>
     </body>
 </html>

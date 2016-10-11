@@ -6,10 +6,13 @@ com/mycompany/task/controller/MainController.class
 com/mycompany/task/model/BusVehicle.class
 com/mycompany/task/model/GeoPoint.class
 com/mycompany/task/model/Bus.class
+com/mycompany/task/model/SectionPredicate.class
 com/mycompany/task/model/History.class
+com/mycompany/task/model/BusReport.class
 com/mycompany/task/model/Point.class
 com/mycompany/task/model/Route.class
 com/mycompany/task/controller/ReportController.class
+com/mycompany/task/controller/ReportApiController$1.class
 com/mycompany/task/controller/Segment.class
 com/mycompany/task/controller/ReportApiController.class
 com/mycompany/task/config/SpringWebMVCConfig.class
@@ -17,4 +20,5 @@ com/mycompany/task/controller/PointType.class
 com/mycompany/task/model/Straight.class
 com/mycompany/task/model/Section.class
 com/mycompany/task/controller/RectanglePoint.class
+com/mycompany/task/model/AllRoutesResource.class
 com/mycompany/task/mapper/BusVehicleMapper.class

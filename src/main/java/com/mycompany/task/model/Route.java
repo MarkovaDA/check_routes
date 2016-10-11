@@ -11,7 +11,17 @@ public class Route {
     private String sections; //строка секций через пробел
     
     private Boolean excluded = false; //исключен ли из списка возможных маршрутов? 
+    
+    private Integer counter = 0; //считает кол-во совпадений с маршрутом
 
+    public Integer getCounter() {
+        return counter;
+    }
+
+    public void setCounter(Integer counter) {
+        this.counter = counter;
+    }
+    
     public Boolean getExcluded() {
         return excluded;
     }
