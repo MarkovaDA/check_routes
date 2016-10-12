@@ -6,20 +6,29 @@ package com.mycompany.task.model;
 import java.util.List;
 
 public class BusReport {
-    private String busId;   
+    //private String busId;  
+    private BusInfo info;
     private List<String> prescribedRoutes; //предписанные маршруты
     
     private String todayResult;     //результат анализа
     
-    public BusReport(String _busId, List<String> _prescribedRoutes, String _todayResult){
-        this.busId = _busId;
+    public BusReport(BusInfo _info, List<String> _prescribedRoutes, String _todayResult){
+        this.info = _info;
         this.prescribedRoutes = _prescribedRoutes;
         this.todayResult = _todayResult;
     }
 
-    public String getBusId() {
-        return busId;
+    public BusInfo getInfo() {
+        return info;
     }
+
+    public void setInfo(BusInfo info) {
+        this.info = info;
+    }
+
+    /*public String getBusId() {
+        return busId;
+    }*/
 
     public List<String> getPrescribedRoutes() {
         return prescribedRoutes;

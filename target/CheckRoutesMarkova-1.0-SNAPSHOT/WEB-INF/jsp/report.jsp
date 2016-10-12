@@ -37,7 +37,7 @@
             }
             $(document).ready(function(){
                 
-                $("#datepicker").datepicker(
+                /*$("#datepicker").datepicker(
                     {
                         changeMonth:true,
                         changeYear:true,
@@ -69,20 +69,22 @@
                             });
                         }
                     }
-                );
+                );*/
                 $('#load').hide();
-                $('#generate_btn').bind("click", generateReport);
-               
+                generateReport();
             });  
-
+            
             function generateReport(){
                  $('#load').fadeIn(100);
                  $.get("report_api/anylize2", function(data){
-                    //console.log(data);
+                     console.log(data);
                      $('#load').fadeOut(100);
                      for(var index in data){
                         var item = data[index];                         
-                        var pattern = "<tr><td>" + item.busId + "</td><td>";
+                        var pattern = "<tr><td>" + item.info.busID + "</td><td>" + item.info.clientName + "</td><td>"
+                        + item.info.busNumber + "</td><td>"
+                        ;
+                            
                         for(var j=0; j < item.prescribedRoutes.length; j++)
                             pattern += item.prescribedRoutes[j] + ";";
                         pattern+="</td>";
@@ -98,8 +100,7 @@
         
         <!--<p>Дата: <input type="text" id="datepicker"></p>-->
         <div style="width: 100%; text-align: left;">
-            <h1>Отчет по траектории движения автобусов</h1>
-            <button id="generate_btn">сгенерировать</button>
+            <h1 align="center">Отчет по траектории движения автобусов</h1>
             <!--<p>Укажите идентификатор транспорта (1 ... 6544)</p>
             <input type="text" id="vechicle_id" value="1177"><br>
             <br>
@@ -109,10 +110,12 @@
             <div id="load" style="width:100%; text-align: center;">
                 <img src="<c:url value="resources/image/loader.gif"/>" width="50px">
             </div>           
-            <table id="report_table" cellspacing="0" cellpadding="5">
+            <table id="report_table" cellspacing="0" cellpadding="5" align="center">
                 <caption>Сводная таблица</caption>
                 <tr bgcolor="red">
-                    <th>BusID</th>
+                    <th>BusID</th>                   
+                    <th>клиент</th>
+                    <th>номер</th>
                     <th>предписанные маршруты</th>
                     <th>траектория движения сегодня</th>
                 </tr>

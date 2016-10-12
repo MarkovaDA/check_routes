@@ -3,6 +3,7 @@ package com.mycompany.task.controller;
 
 import com.mycompany.task.mapper.MarshrutMapper;
 import com.mycompany.task.model.AllRoutesResource;
+import com.mycompany.task.model.BusInfo;
 import com.mycompany.task.model.BusReport;
 import com.mycompany.task.model.History;
 import com.mycompany.task.model.Route;
@@ -36,74 +37,8 @@ public class ReportApiController {
     }
     
     
-    //анализ маршрута за сегодняшний день по указанному автобусу
-    @RequestMapping(value = "/anylize", method = RequestMethod.GET)
-    @ResponseBody
-    public List<BusReport> anylize(){
-        List<BusReport> busReports = new ArrayList<>(); //возвращаемый список отчетов
-               
-        java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
-        
-        List<String> todayBuses = segmentsMapper.getTodayActiveBuses(sqlDate.toString());
-        for(String todayBusID: todayBuses) {
-            
-            flushExcluded(); //очищаем булевские флажки
-            BusReport todayReport = null; //отчет по текущему автобусу
-            List<History> historyForDay =  segmentsMapper.getHistoryFields(sqlDate.toString(), todayBusID);//история движения
-            List<String> routesIds = segmentsMapper.getRoutesForBus(todayBusID); //предписанные маршруты
-            
-            for(int i=0; i < historyForDay.size(); i++){
 
-                String currentSectionId = historyForDay.get(i).getSectionID().toString();
-                
-                AllRoutesResource.allRoutes.forEach(route -> {
-                    
-                    if (!route.getExcluded()){
-                        if (!route.getSectionsIds().contains(currentSectionId)){
-                            route.setExcluded(Boolean.TRUE);
-                        }
-                    }
-                });       
-            }
-            
-            Iterator<Route> allRoutesIterator = AllRoutesResource.allRoutes.iterator();
-            while(allRoutesIterator.hasNext()){
-                Route route = allRoutesIterator.next();
-                if (!route.getExcluded())
-                {                    
-                    todayReport = new BusReport(todayBusID, routesIds, route.getRouteId().toString());
-                    break;
-                }
-            }
-            if (todayReport !=null){
-                busReports.add(todayReport);
-                continue;
-            }
-            //на какой маршрут более всего похоже,если точного совпадения не найдено 
-            for(int i=0; i < historyForDay.size(); i++){
-                String currentSectionId = historyForDay.get(i).getSectionID().toString();
-                AllRoutesResource.allRoutes.forEach(route -> {
-                    //в текущем маршруте содержится выбранная секция
-                    if (route.getSectionsIds().contains(currentSectionId)){
-                        route.setCounter(route.getCounter() + 1);
-                    }
-                });        
-            }
-        
-            AllRoutesResource.allRoutes.sort(routeCounterComparator);
-            Integer checkingRoute = AllRoutesResource.allRoutes.get(0).getCounter();
-            if (checkingRoute > 0)
-                //высичтать процент совпадения по маршрутам
-                todayReport = new BusReport(todayBusID, routesIds, "больше всего совпадений с маршрутом " + checkingRoute);
-            if (todayReport == null)
-                todayReport = new BusReport(todayBusID, routesIds, "в базе нет соотвествующего маршрута");
-            
-            busReports.add(todayReport);
-        }
-        return busReports;
-    }
-    
-    
+      
     //второй вариант алгоритма
     @RequestMapping(value = "/anylize2", method = RequestMethod.GET)
     @ResponseBody
@@ -113,22 +48,22 @@ public class ReportApiController {
                
         java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
         //String sqlDate = "2016-10-07";
-        List<String> todayBuses = segmentsMapper.getTodayActiveBuses(sqlDate.toString());
+        List<BusInfo> todayBuses = segmentsMapper.getTodayActiveBuses(sqlDate.toString());
         
-        for(String todayBusID: todayBuses) 
+        for(BusInfo todayBus: todayBuses) 
         {          
             BusReport todayReport = null; //отчет по текущему автобусу
-            List<History> historyForDay =  segmentsMapper.getHistoryFields(sqlDate.toString(), todayBusID);//история движения
-            List<String> routesIds = segmentsMapper.getRoutesForBus(todayBusID); //предписанные маршруты
+            List<History> historyForDay =  segmentsMapper.getHistoryFields(sqlDate.toString(), todayBus.getBusID());//история движения
+            List<String> routesIds = segmentsMapper.getRoutesForBus(todayBus.getBusID()); //предписанные маршруты
             List<Route> dublicateAllRoutes = new ArrayList();//рабочий список дубликатов маршрута
             dublicateAllRoutes.addAll(AllRoutesResource.allRoutes);
           
             int indexCrashSection = getCrashSection(dublicateAllRoutes, historyForDay,0);  
             if (indexCrashSection == -1){
                 if (dublicateAllRoutes.size() == 1)
-                    todayReport = new BusReport(todayBusID, routesIds, dublicateAllRoutes.get(0).getRouteId().toString());
+                    todayReport = new BusReport(todayBus, routesIds, dublicateAllRoutes.get(0).getRouteId().toString());
                 if (dublicateAllRoutes.size() > 1){
-                    todayReport = new BusReport(todayBusID, routesIds, "мало данных.число секций за день " + historyForDay.size());
+                    todayReport = new BusReport(todayBus, routesIds, "мало данных.число секций за день " + historyForDay.size());
                 }
             }
             else if (indexCrashSection > -1){
@@ -138,9 +73,9 @@ public class ReportApiController {
                 indexCrashSection = getCrashSection(dublicateAllRoutes, historyForDay,indexCrashSection + 1);
                 if (indexCrashSection == -1){
                     if (dublicateAllRoutes.size() == 1)
-                        todayReport = new BusReport(todayBusID, routesIds, dublicateAllRoutes.get(0).getRouteId().toString());
+                        todayReport = new BusReport(todayBus, routesIds, dublicateAllRoutes.get(0).getRouteId().toString());
                     if (dublicateAllRoutes.size() > 1){
-                        todayReport = new BusReport(todayBusID, routesIds, "мало данных.число секций за день " + historyForDay.size());
+                        todayReport = new BusReport(todayBus, routesIds, "мало данных.число секций за день " + historyForDay.size());
                     }
                     /*else if (indexCrashSection > -1){
                        //третичный запуск
@@ -149,7 +84,7 @@ public class ReportApiController {
             }
 
             if (todayReport == null)
-            todayReport = new BusReport(todayBusID, routesIds, "cовпадающий маршрут не найден");
+            todayReport = new BusReport(todayBus, routesIds, "cовпадающий маршрут не найден");
             //добавляем в список
             busReports.add(todayReport);
         }

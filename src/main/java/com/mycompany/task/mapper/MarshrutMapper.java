@@ -1,5 +1,6 @@
 
 package com.mycompany.task.mapper;
+import com.mycompany.task.model.BusInfo;
 import com.mycompany.task.model.History;
 import com.mycompany.task.model.Route;
 import com.mycompany.task.model.Section;
@@ -68,7 +69,19 @@ public interface MarshrutMapper {
     @Select("select * from vistar_marshrut.routes")
     List<Route> getAllRoutes();
     
-    @Select("select distinct busID from vistar_marshrut.history where switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY)")
-    List<String> getTodayActiveBuses(@Param("date_str")String date_str);
+    @Select
+    ("select distinct h.busID, vbs.busNumChar as busNumber, ga.comments as clientName from vistar_marshrut.history h " +
+    "left join vistar_marshrut.busVehicle bv " +
+    "on h.busID = bv.bus_id " +
+    "left join gps3.vehicles gv " +
+    "on bv.vehicle_id = gv.vehicleNumber " +
+    "left join gps3.accounts ga " +
+    "on ga.client = gv.client " +
+    "left join vistar_marshrut.buses vbs " +
+    "on  h.busID = vbs.busID " +
+    "where switchTime between #{date_str} and  date_add(#{date_str}, INTERVAL 1 DAY) ")
+    //@Select("select distinct busID from vistar_marshrut.history where switchTime between #{date_str} and  date_add(#{date_str},INTERVAL 1 DAY)")
+    //List<String> getTodayActiveBuses(@Param("date_str")String date_str);
+    List<BusInfo> getTodayActiveBuses(@Param("date_str")String date_str);
         
 }
